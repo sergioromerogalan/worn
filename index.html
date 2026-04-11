@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WØRN</title>
+  <link rel="icon" type="image/svg+xml" href="worn_logo_volt_bueno.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@900&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      background-color: #0A0A0A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 24px 16px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(16px, 4vw, 28px);
+      width: 100%;
+      max-width: 640px;
+      text-align: center;
+    }
+
+    /* ── Logo draw animation ──────────────────────────── */
+
+    .logo {
+      width: clamp(48px, 12vw, 72px);
+      height: clamp(48px, 12vw, 72px);
+    }
+
+    /* Circle: circumference = 2π × 75 ≈ 472 */
+    #circle {
+      stroke-dasharray: 472;
+      stroke-dashoffset: 472;
+      animation: draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    /* Diagonal: length = √(110²+110²) ≈ 156 */
+    #diag {
+      stroke-dasharray: 156;
+      stroke-dashoffset: 156;
+      animation: draw 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.9s forwards;
+    }
+
+    @keyframes draw {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* ── Text fade in after drawing ends (1.5s) ─────────── */
+
+    .title,
+    .subtitle,
+    .coming-soon {
+      opacity: 0;
+      animation: fadeIn 0.7s ease forwards;
+    }
+
+    .title        { animation-delay: 1.6s; }
+    .subtitle     { animation-delay: 1.75s; }
+    .coming-soon  { animation-delay: 1.9s; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Typography ──────────────────────────────────────── */
+
+    .title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 900;
+      font-size: clamp(64px, 20vw, 140px);
+      color: #F5F5F0;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      user-select: none;
+    }
+
+    .subtitle {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: clamp(13px, 3.5vw, 18px);
+      color: #888888;
+      letter-spacing: 0.04em;
+    }
+
+    .coming-soon {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: clamp(10px, 2.5vw, 11px);
+      color: #888888;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 360px) {
+      .title { font-size: 58px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200" aria-hidden="true">
+      <circle id="circle" cx="0" cy="0" r="75" fill="none" stroke="#E8FF47" stroke-width="18" stroke-linecap="round"/>
+      <path   id="diag"   d="M55,-55 L-55,55" fill="none" stroke="#E8FF47" stroke-width="20" stroke-linecap="round"/>
+    </svg>
+
+    <h1 class="title">WØRN</h1>
+    <p class="subtitle">Your style. Your identity.</p>
+    <span class="coming-soon">Coming soon</span>
+
+  </div>
+</body>
+</html>
