@@ -39,21 +39,17 @@
       text-align: center;
     }
 
-    /* ── Logo draw animation ──────────────────────────── */
-
     .logo {
       width: clamp(48px, 12vw, 72px);
       height: clamp(48px, 12vw, 72px);
     }
 
-    /* Circle: circumference = 2π × 75 ≈ 472 */
     #circle {
       stroke-dasharray: 472;
       stroke-dashoffset: 472;
       animation: draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
 
-    /* Diagonal: length = √(110²+110²) ≈ 156 */
     #diag {
       stroke-dasharray: 156;
       stroke-dashoffset: 156;
@@ -63,8 +59,6 @@
     @keyframes draw {
       to { stroke-dashoffset: 0; }
     }
-
-    /* ── Text fade in after drawing ends (1.5s) ─────────── */
 
     .title,
     .subtitle,
@@ -81,8 +75,6 @@
       from { opacity: 0; transform: translateY(8px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-
-    /* ── Typography ──────────────────────────────────────── */
 
     .title {
       font-family: 'Poppins', sans-serif;
@@ -114,8 +106,6 @@
     @media (max-width: 360px) {
       .title { font-size: 58px; }
     }
-
-    /* ── Footer ──────────────────────────────────────────── */
 
     footer {
       position: fixed;
@@ -171,6 +161,255 @@
     }
 
     .btn-info:hover { opacity: 0.8; }
+
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      z-index: 10;
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+    }
+
+    .popup-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .popup {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #111111;
+      border-radius: 20px 20px 0 0;
+      padding: 12px 28px 44px;
+      transform: translateY(100%);
+      transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+      z-index: 20;
+      max-height: 92dvh;
+      overflow-y: auto;
+    }
+
+    .popup.open { transform: translateY(0); }
+
+    .popup-handle {
+      width: 36px;
+      height: 4px;
+      background: #2a2a2a;
+      border-radius: 2px;
+      margin: 0 auto 28px;
+    }
+
+    .popup-close {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #444;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 4px 6px;
+      transition: color 0.2s;
+    }
+
+    .popup-close:hover { color: #F5F5F0; }
+
+    .popup-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 900;
+      font-size: clamp(20px, 5vw, 26px);
+      color: #F5F5F0;
+      margin-bottom: 6px;
+    }
+
+    .popup-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .popup-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #444;
+      margin-bottom: 6px;
+    }
+
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      background: #161616;
+      border: 1px solid #1e1e1e;
+      border-radius: 6px;
+      transition: border-color 0.2s;
+    }
+
+    .input-wrap:focus-within { border-color: #E8FF47; }
+
+    .input-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      color: #333;
+      flex-shrink: 0;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+    }
+
+    .input-icon svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .input-wrap input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #F5F5F0;
+      padding: 13px 14px 13px 0;
+    }
+
+    .input-wrap input::placeholder { color: #2e2e2e; }
+
+    .notify-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #161616;
+      border: 1px solid #1e1e1e;
+      border-radius: 6px;
+      padding: 14px 16px;
+      cursor: pointer;
+      margin-top: 2px;
+    }
+
+    .notify-row input[type="checkbox"] { display: none; }
+
+    .toggle-track {
+      width: 42px;
+      height: 23px;
+      background: #252525;
+      border-radius: 12px;
+      position: relative;
+      transition: background 0.25s;
+      flex-shrink: 0;
+    }
+
+    .notify-row input:checked ~ .toggle-track { background: #E8FF47; }
+
+    .toggle-thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 17px;
+      height: 17px;
+      background: #444;
+      border-radius: 50%;
+      transition: transform 0.25s, background 0.25s;
+    }
+
+    .notify-row input:checked ~ .toggle-track .toggle-thumb {
+      transform: translateX(19px);
+      background: #0A0A0A;
+    }
+
+    .notify-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: #777;
+      line-height: 1.4;
+    }
+
+    .btn-submit {
+      width: 100%;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #0A0A0A;
+      background: #E8FF47;
+      border: none;
+      border-radius: 4px;
+      padding: 16px;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: opacity 0.2s;
+    }
+
+    .btn-submit:hover { opacity: 0.85; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .error-msg {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: #ff4747;
+      text-align: center;
+      display: none;
+    }
+
+    .error-msg.show { display: block; }
+
+    .popup-success {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 24px 0 12px;
+      text-align: center;
+    }
+
+    .popup-success.show { display: flex; }
+    .popup-form.hide { display: none; }
+
+    .success-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #E8FF4720;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #E8FF47;
+      font-size: 22px;
+    }
+
+    .success-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 900;
+      font-size: 20px;
+      color: #F5F5F0;
+    }
+
+    .success-msg {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body>
@@ -186,31 +425,192 @@
     <span class="coming-soon">Summer 2026</span>
 
     <div class="social-links">
-      <!-- Instagram -->
       <a href="https://www.instagram.com/worn.community/" aria-label="Instagram">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
       </a>
-      <!-- TikTok -->
       <a href="https://www.tiktok.com/@worn.community" aria-label="TikTok">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.77a4.85 4.85 0 0 1-1.01-.08z"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.77a4.85 4.85 0 0 1-1.01-.08z"/></svg>
       </a>
-      <!-- X / Twitter -->
       <a href="https://x.com/worncom" aria-label="X">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.629 5.905-5.629zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.629 5.905-5.629zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
       </a>
     </div>
 
   </div>
 
   <footer>
-    <button class="btn-info">Solicitar información</button>
+    <button class="btn-info" id="btn-info">Solicitar información</button>
   </footer>
+
+  <div class="popup-overlay" id="popup-overlay"></div>
+
+  <div class="popup" id="popup" role="dialog" aria-modal="true" aria-labelledby="popup-title">
+    <div class="popup-handle"></div>
+    <button class="popup-close" id="popup-close" aria-label="Cerrar">✕</button>
+
+    <h2 class="popup-title" id="popup-title">Únete a la lista de espera</h2>
+    <p class="popup-desc">Déjanos tus datos y te avisamos cuando WØRN esté listo.</p>
+
+    <form class="popup-form" id="popup-form" novalidate>
+
+      <div class="field">
+        <label for="f-email">Correo electrónico *</label>
+        <div class="input-wrap">
+          <span class="input-icon">@</span>
+          <input id="f-email" type="email" placeholder="tu@correo.com" autocomplete="email" required />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-ig">Instagram</label>
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </span>
+          <input id="f-ig" type="text" placeholder="@usuario" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-tt">TikTok</label>
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.77a4.85 4.85 0 0 1-1.01-.08z"/></svg>
+          </span>
+          <input id="f-tt" type="text" placeholder="@usuario" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-x">X / Twitter</label>
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.629 5.905-5.629zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </span>
+          <input id="f-x" type="text" placeholder="@usuario" autocomplete="off" />
+        </div>
+      </div>
+
+      <label class="notify-row">
+        <input type="checkbox" id="f-notify" checked />
+        <div class="toggle-track"><span class="toggle-thumb"></span></div>
+        <span class="notify-label">Avisarme cuando la aplicación esté disponible</span>
+      </label>
+
+      <p class="error-msg" id="error-msg">Por favor introduce un email válido.</p>
+
+      <button type="submit" class="btn-submit" id="btn-submit">Unirme a la lista</button>
+    </form>
+
+    <div class="popup-success" id="popup-success">
+      <div class="success-icon">✓</div>
+      <p class="success-title">¡Ya estás dentro!</p>
+      <p class="success-msg">Te avisaremos en cuanto WØRN<br>esté listo para usar.</p>
+    </div>
+  </div>
+
+  <script>
+    // ── Configuración Supabase ──────────────────────────────
+    const SUPABASE_URL = 'https://eiwoeyswuwqosojunrg.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpd29leXdzd3V3cW9zb2p1bnJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwODkyMTUsImV4cCI6MjA5MTY2NTIxNX0.7sssT-cuFYFeirmW94ugqqUiqi28KXQOSdF2ElBi2yM';
+
+    // ── Popup ───────────────────────────────────────────────
+    const btnInfo  = document.getElementById('btn-info');
+    const overlay  = document.getElementById('popup-overlay');
+    const popup    = document.getElementById('popup');
+    const closeBtn = document.getElementById('popup-close');
+    const form     = document.getElementById('popup-form');
+    const success  = document.getElementById('popup-success');
+    const errorMsg = document.getElementById('error-msg');
+    const btnSubmit = document.getElementById('btn-submit');
+
+    function openPopup() {
+      popup.classList.add('open');
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePopup() {
+      popup.classList.remove('open');
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    btnInfo.addEventListener('click', openPopup);
+    overlay.addEventListener('click', closePopup);
+    closeBtn.addEventListener('click', closePopup);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePopup(); });
+
+    popup.addEventListener('transitionend', () => {
+      if (!popup.classList.contains('open')) {
+        form.classList.remove('hide');
+        success.classList.remove('show');
+        errorMsg.classList.remove('show');
+        form.reset();
+      }
+    });
+
+    // ── Submit → Supabase ───────────────────────────────────
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email    = document.getElementById('f-email').value.trim();
+      const instagram = document.getElementById('f-ig').value.trim();
+      const tiktok   = document.getElementById('f-tt').value.trim();
+      const twitter  = document.getElementById('f-x').value.trim();
+      const notify   = document.getElementById('f-notify').checked;
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errorMsg.classList.add('show');
+        return;
+      }
+
+      errorMsg.classList.remove('show');
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = 'Enviando...';
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            email,
+            instagram: instagram || null,
+            tiktok: tiktok || null,
+            twitter: twitter || null,
+            notify
+          })
+        });
+
+        if (res.ok || res.status === 201) {
+          form.classList.add('hide');
+          success.classList.add('show');
+          setTimeout(closePopup, 2500);
+        } else {
+          const data = await res.json();
+          // Email duplicado
+          if (data?.code === '23505') {
+            form.classList.add('hide');
+            success.classList.add('show');
+            setTimeout(closePopup, 2500);
+          } else {
+            throw new Error('Error al guardar');
+          }
+        }
+      } catch (err) {
+        errorMsg.textContent = 'Algo salió mal. Inténtalo de nuevo.';
+        errorMsg.classList.add('show');
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Unirme a la lista';
+      }
+    });
+  </script>
 
 </body>
 </html>
