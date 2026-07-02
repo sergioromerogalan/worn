@@ -111,7 +111,12 @@
   @keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(8px) } }
 
   /* ---------- mockup de móvil ---------- */
-  .feature { display: flex; align-items: center; gap: clamp(24px, 5vw, 80px); }
+  /* texto y móvil anclados a extremos opuestos: el hueco central
+     queda libre para que el logo 3D pase girando entre ambos */
+  .feature {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; gap: clamp(24px, 4vw, 60px);
+  }
   section.right .feature { flex-direction: row-reverse; }
   .phone {
     flex-shrink: 0;
@@ -550,17 +555,38 @@ function onScroll() {
 addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
-// --- keyframes: estado del logo por tramo de scroll ---
-// p: progreso | xf: posición horizontal como FRACCIÓN del ancho visible (-0.5..0.5)
-// ry/rx: rotación | s: escala relativa | z: cámara
-const KF = [
-  { p: 0.00, xf:  0.26, ry:  0.0,  rx: 0.05, s: 1.00, z: 6.0 },  // hero: a la derecha del texto
-  { p: 0.18, xf: -0.26, ry:  2.2,  rx: 0.25, s: 0.78, z: 6.0 },  // armario: a la izquierda
-  { p: 0.38, xf:  0.26, ry:  4.4,  rx: -0.2, s: 0.78, z: 6.0 },  // outfits: a la derecha
-  { p: 0.58, xf: -0.26, ry:  6.6,  rx: 0.3,  s: 0.78, z: 6.0 },  // worns
-  { p: 0.78, xf:  0.26, ry:  8.8,  rx: -0.25,s: 0.78, z: 6.0 },  // feed
-  { p: 1.00, xf:  0.00, ry: 12.56, rx: 0.0,  s: 1.12, z: 5.2 }   // beta: centrado, de frente
+// --- keyframes: estado del logo POR SECCIÓN ---
+// xf: fracción del ancho visible (-0.5..0.5) | s: escala relativa
+// En las secciones de features el logo va por el HUECO CENTRAL
+// (texto a un lado, móvil al otro), pequeño y girando.
+const STATES = [
+  { xf:  0.26, ry:  0.0,  rx: 0.05,  s: 1.00, z: 6.0 },  // hero: derecha (lado libre)
+  { xf: -0.02, ry:  2.2,  rx: 0.25,  s: 0.46, z: 6.0 },  // armario: centro
+  { xf:  0.02, ry:  4.4,  rx: -0.2,  s: 0.46, z: 6.0 },  // outfits: centro
+  { xf: -0.02, ry:  6.6,  rx: 0.3,   s: 0.46, z: 6.0 },  // worns: centro
+  { xf:  0.02, ry:  8.8,  rx: -0.25, s: 0.46, z: 6.0 },  // feed: centro
+  { xf:  0.00, ry: 12.56, rx: 0.0,   s: 1.12, z: 5.2 }   // beta: centrado, grande
 ];
+
+// Los "p" de cada keyframe se calculan desde la posición REAL de cada
+// sección en la página (no porcentajes a ojo): el estado i alcanza su
+// pico exactamente cuando la sección i está centrada en pantalla.
+const sections = document.querySelectorAll('.content > section');
+let KF = [];
+function buildKF() {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  KF = [];
+  sections.forEach((sec, i) => {
+    const center = sec.offsetTop + sec.offsetHeight / 2 - innerHeight / 2;
+    const p = Math.max(0, Math.min(1, max > 0 ? center / max : 0));
+    KF.push(Object.assign({ p }, STATES[Math.min(i, STATES.length - 1)]));
+  });
+  KF[0].p = 0;
+  KF[KF.length - 1].p = 1;
+}
+buildKF();
+addEventListener('resize', buildKF);
+addEventListener('load', () => { buildKF(); setTimeout(buildKF, 600); }); // re-mide al cargar fuentes
 function stateAt(p) {
   let a = KF[0], b = KF[KF.length - 1];
   for (let k = 0; k < KF.length - 1; k++) {
