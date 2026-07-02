@@ -71,7 +71,7 @@
     padding: 14vh clamp(20px, 6vw, 80px);
   }
   .half { max-width: 560px; }
-  section.right .half { margin-left: auto; text-align: right; }
+  section.right .half { text-align: right; }
   section.right .half p { margin-left: auto; }
 
   .kicker {
@@ -111,13 +111,16 @@
   @keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(8px) } }
 
   /* ---------- mockup de móvil ---------- */
-  /* texto y móvil anclados a extremos opuestos: el hueco central
-     queda libre para que el logo 3D pase girando entre ambos */
+  /* texto + móvil JUNTOS como un bloque en un lado;
+     la otra mitad queda libre para el logo 3D */
   .feature {
-    display: flex; align-items: center; justify-content: space-between;
-    width: 100%; gap: clamp(24px, 4vw, 60px);
+    display: flex; align-items: center;
+    justify-content: flex-start;
+    gap: clamp(20px, 3vw, 48px);
+    width: 100%;
   }
-  section.right .feature { flex-direction: row-reverse; }
+  section.right .feature { justify-content: flex-end; }
+  .feature .half { max-width: 440px; }
   .phone {
     flex-shrink: 0;
     width: min(280px, 64vw);
@@ -312,8 +315,8 @@
     </div>
   </section>
 
-  <!-- ARMARIO -->
-  <section id="armario">
+  <!-- ARMARIO: bloque a la DERECHA, logo a la izquierda -->
+  <section id="armario" class="right">
     <div class="feature">
       <div class="half">
         <div class="kicker reveal">01 — Armario</div>
@@ -336,8 +339,8 @@
     </div>
   </section>
 
-  <!-- OUTFITS -->
-  <section class="right">
+  <!-- OUTFITS: bloque a la IZQUIERDA, logo a la derecha -->
+  <section>
     <div class="feature">
       <div class="half">
         <div class="kicker reveal">02 — Outfits</div>
@@ -358,8 +361,8 @@
     </div>
   </section>
 
-  <!-- WORNS -->
-  <section>
+  <!-- WORNS: bloque a la DERECHA, logo a la izquierda -->
+  <section class="right">
     <div class="feature">
       <div class="half">
         <div class="kicker reveal">03 — WORNs</div>
@@ -384,8 +387,8 @@
     </div>
   </section>
 
-  <!-- FEED -->
-  <section class="right">
+  <!-- FEED: bloque a la IZQUIERDA, logo a la derecha -->
+  <section>
     <div class="feature">
       <div class="half">
         <div class="kicker reveal">04 — Comunidad</div>
@@ -560,11 +563,11 @@ onScroll();
 // En las secciones de features el logo va por el HUECO CENTRAL
 // (texto a un lado, móvil al otro), pequeño y girando.
 const STATES = [
-  { xf:  0.26, ry:  0.0,  rx: 0.05,  s: 1.00, z: 6.0 },  // hero: derecha (lado libre)
-  { xf: -0.02, ry:  2.2,  rx: 0.25,  s: 0.46, z: 6.0 },  // armario: centro
-  { xf:  0.02, ry:  4.4,  rx: -0.2,  s: 0.46, z: 6.0 },  // outfits: centro
-  { xf: -0.02, ry:  6.6,  rx: 0.3,   s: 0.46, z: 6.0 },  // worns: centro
-  { xf:  0.02, ry:  8.8,  rx: -0.25, s: 0.46, z: 6.0 },  // feed: centro
+  { xf:  0.26, ry:  0.0,  rx: 0.05,  s: 1.00, z: 6.0 },  // hero: texto izq → logo derecha
+  { xf: -0.25, ry:  2.2,  rx: 0.25,  s: 0.75, z: 6.0 },  // armario: bloque dcha → logo IZQUIERDA
+  { xf:  0.25, ry:  4.4,  rx: -0.2,  s: 0.75, z: 6.0 },  // outfits: bloque izq → logo DERECHA
+  { xf: -0.25, ry:  6.6,  rx: 0.3,   s: 0.75, z: 6.0 },  // worns: bloque dcha → logo IZQUIERDA
+  { xf:  0.25, ry:  8.8,  rx: -0.25, s: 0.75, z: 6.0 },  // feed: bloque izq → logo DERECHA
   { xf:  0.00, ry: 12.56, rx: 0.0,   s: 1.12, z: 5.2 }   // beta: centrado, grande
 ];
 
@@ -636,10 +639,9 @@ function animate() {
     targetX = 0;
     fit = Math.min(1, (visW * 0.78) / LOGO_WORLD, (visH * 0.55) / LOGO_WORLD);
   } else {
-    // desktop: a un lado, ocupando la mitad libre que deja el texto,
-    // nunca más del 42% del ancho ni del 72% del alto visibles
+    // desktop: en la mitad libre, sin invadir el bloque texto+móvil
     targetX = st.xf * visW;
-    fit = Math.min(1, (visW * 0.42) / LOGO_WORLD, (visH * 0.72) / LOGO_WORLD);
+    fit = Math.min(1, (visW * 0.38) / LOGO_WORLD, (visH * 0.72) / LOGO_WORLD);
   }
   const targetS = st.s * fit * S;
 
