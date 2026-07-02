@@ -1,616 +1,638 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WØRN</title>
-  <link rel="icon" type="image/svg+xml" href="worn_logo_volt_bueno.svg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@900&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WØRN — La red social de tu armario</title>
+<meta name="description" content="WØRN. Digitaliza tu armario, monta outfits y comparte lo que llevas. Beta en iOS.">
 
-    html, body {
-      height: 100%;
-    }
+<!-- General Sans (Fontshare) -->
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
 
-    body {
-      background-color: #0A0A0A;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      min-height: 100dvh;
-      padding: 24px 16px;
-    }
+<style>
+  :root {
+    --bg: #0A0A0A;
+    --surface: #1A1A1A;
+    --ink: #F5F5F0;
+    --volt: #E8FF47;
+    --font: 'General Sans', -apple-system, 'Helvetica Neue', system-ui, sans-serif;
+  }
 
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: clamp(16px, 4vw, 28px);
-      width: 100%;
-      max-width: 640px;
-      text-align: center;
-    }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--volt); color: var(--bg); }
 
-    .logo {
-      width: clamp(48px, 12vw, 72px);
-      height: clamp(48px, 12vw, 72px);
-    }
+  /* ---------- barra de progreso ---------- */
+  .progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--volt); box-shadow: 0 0 16px rgba(232,255,71,.7);
+    z-index: 50;
+  }
 
-    #circle {
-      stroke-dasharray: 472;
-      stroke-dashoffset: 472;
-      animation: draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    }
+  /* ---------- canvas 3D fijo detrás ---------- */
+  #bg { position: fixed; inset: 0; z-index: 0; }
+  #bg canvas { display: block; }
 
-    #diag {
-      stroke-dasharray: 156;
-      stroke-dashoffset: 156;
-      animation: draw 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.9s forwards;
-    }
+  /* ---------- nav ---------- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px clamp(20px, 5vw, 64px);
+    background: linear-gradient(to bottom, rgba(10,10,10,.85), transparent);
+  }
+  .wordmark {
+    font-weight: 700; font-size: 1.35rem; letter-spacing: .06em;
+    color: var(--ink); text-decoration: none;
+  }
+  .wordmark span { color: var(--volt); }
+  .nav-cta {
+    font-family: var(--font); font-weight: 600; font-size: .9rem;
+    color: var(--bg); background: var(--volt);
+    padding: 10px 22px; border-radius: 999px; border: none;
+    text-decoration: none; cursor: pointer;
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(232,255,71,.35); }
 
-    @keyframes draw {
-      to { stroke-dashoffset: 0; }
-    }
+  /* ---------- layout de secciones ---------- */
+  .content { position: relative; z-index: 1; }
+  section {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 14vh clamp(20px, 6vw, 80px);
+  }
+  .half { max-width: 560px; }
+  section.right .half { margin-left: auto; text-align: right; }
+  section.right .half p { margin-left: auto; }
 
-    .title,
-    .subtitle,
-    .coming-soon {
-      opacity: 0;
-      animation: fadeIn 0.7s ease forwards;
-    }
+  .kicker {
+    color: var(--volt); font-weight: 600; font-size: .8rem;
+    letter-spacing: .22em; text-transform: uppercase; margin-bottom: 1.1rem;
+  }
+  h1 {
+    font-weight: 700; letter-spacing: -0.035em; line-height: .98;
+    font-size: clamp(3rem, 9.5vw, 7rem);
+  }
+  h2 {
+    font-weight: 700; letter-spacing: -0.02em; line-height: 1.02;
+    font-size: clamp(2rem, 5vw, 3.4rem); margin-bottom: 1rem;
+  }
+  p.lead {
+    font-size: clamp(1.05rem, 2vw, 1.3rem); line-height: 1.6;
+    opacity: .82; max-width: 46ch; font-weight: 500;
+  }
+  .volt { color: var(--volt); }
 
-    .title        { animation-delay: 1.6s; }
-    .subtitle     { animation-delay: 1.75s; }
-    .coming-soon  { animation-delay: 1.9s; }
+  .hero { align-items: flex-start; }
+  .hero .sub { margin-top: 1.6rem; }
+  .hero-ctas { display: flex; gap: 14px; margin-top: 2.4rem; flex-wrap: wrap; }
+  .btn-primary, .btn-ghost {
+    font-family: var(--font); font-weight: 600; font-size: 1rem;
+    padding: 15px 32px; border-radius: 999px; cursor: pointer;
+    text-decoration: none; display: inline-block; transition: all .2s ease;
+  }
+  .btn-primary { background: var(--volt); color: var(--bg); border: 2px solid var(--volt); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(232,255,71,.35); }
+  .btn-ghost { background: transparent; color: var(--ink); border: 2px solid rgba(245,245,240,.25); }
+  .btn-ghost:hover { border-color: var(--volt); color: var(--volt); }
+  .scroll-hint {
+    margin-top: 5rem; font-size: .85rem; font-weight: 500; opacity: .5;
+    animation: bob 2.2s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(8px) } }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+  /* ---------- mockup de móvil ---------- */
+  .feature { display: flex; align-items: center; gap: clamp(24px, 5vw, 80px); }
+  section.right .feature { flex-direction: row-reverse; }
+  .phone {
+    flex-shrink: 0;
+    width: min(280px, 64vw);
+    aspect-ratio: 9 / 19;
+    background: var(--surface);
+    border: 1px solid rgba(245,245,240,.12);
+    border-radius: 38px;
+    padding: 14px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.6), inset 0 0 0 2px rgba(0,0,0,.5);
+    position: relative; overflow: hidden;
+  }
+  .phone::before {
+    content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    width: 34%; height: 22px; background: #000; border-radius: 999px; z-index: 2;
+  }
+  .screen {
+    width: 100%; height: 100%;
+    background: #0d0d0d; border-radius: 26px;
+    padding: 44px 12px 12px; overflow: hidden;
+    display: flex; flex-direction: column; gap: 10px;
+    font-size: 11px;
+  }
+  .app-bar { display: flex; justify-content: space-between; align-items: center; padding: 0 4px; }
+  .app-bar b { font-size: 13px; letter-spacing: .05em; }
+  .app-bar b span { color: var(--volt); }
+  .chip {
+    background: rgba(232,255,71,.12); color: var(--volt);
+    padding: 3px 10px; border-radius: 999px; font-weight: 600; font-size: 10px;
+  }
 
-    .title {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 900;
-      font-size: clamp(64px, 20vw, 140px);
-      color: #F5F5F0;
-      letter-spacing: -0.03em;
-      line-height: 1;
-      user-select: none;
-    }
+  /* armario: grid de prendas */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .garment {
+    aspect-ratio: 1; border-radius: 12px;
+    background: linear-gradient(145deg, #191919, #101010);
+    border: 1px solid rgba(245,245,240,.07);
+    display: flex; align-items: flex-end; padding: 8px;
+    color: rgba(245,245,240,.65); font-weight: 500;
+    position: relative;
+  }
+  .garment i {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-style: normal; font-size: 30px; opacity: .9;
+  }
+  .garment.volt-b { border-color: rgba(232,255,71,.5); }
 
-    .subtitle {
-      font-family: 'Inter', sans-serif;
-      font-weight: 400;
-      font-size: clamp(13px, 3.5vw, 18px);
-      color: #888888;
-      letter-spacing: 0.04em;
-    }
+  /* outfit: collage */
+  .collage {
+    border-radius: 14px; background: linear-gradient(145deg, #191919, #0f0f0f);
+    border: 1px solid rgba(245,245,240,.07);
+    padding: 12px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 8px; flex: 1;
+  }
+  .collage div {
+    border-radius: 10px; background: #141414; border: 1px dashed rgba(232,255,71,.3);
+    display: flex; align-items: center; justify-content: center; font-size: 26px;
+  }
+  .collage div:first-child { grid-row: span 2; font-size: 42px; }
+  .outfit-name { display: flex; justify-content: space-between; align-items: center; padding: 2px 4px; }
+  .outfit-name b { font-size: 12px; }
+  .likes { color: var(--volt); font-weight: 600; }
 
-    .coming-soon {
-      font-family: 'Inter', sans-serif;
-      font-weight: 500;
-      font-size: clamp(10px, 2.5vw, 11px);
-      color: #888888;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
+  /* worns: stories + streak */
+  .stories { display: flex; gap: 10px; padding: 2px; }
+  .story {
+    width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+    background: #141414; border: 2px solid rgba(245,245,240,.15);
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+    position: relative;
+  }
+  .story.live { border-color: var(--volt); box-shadow: 0 0 14px rgba(232,255,71,.35); }
+  .streak {
+    margin-top: auto; border-radius: 14px; background: rgba(232,255,71,.08);
+    border: 1px solid rgba(232,255,71,.35); padding: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .streak .n { font-size: 26px; font-weight: 700; color: var(--volt); }
+  .streak small { opacity: .7; line-height: 1.3; display: block; }
 
-    @media (max-width: 360px) {
-      .title { font-size: 58px; }
-    }
+  /* feed: post */
+  .post {
+    border-radius: 14px; background: linear-gradient(145deg, #191919, #0f0f0f);
+    border: 1px solid rgba(245,245,240,.07); overflow: hidden; flex: 1;
+    display: flex; flex-direction: column;
+  }
+  .post .ph {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    font-size: 44px; background: #121212;
+  }
+  .post .meta { padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .post .meta b { font-size: 11px; }
+  .tagrow { display: flex; gap: 6px; padding: 0 10px 10px; flex-wrap: wrap; }
+  .tag {
+    font-size: 9px; font-weight: 600; color: var(--volt);
+    border: 1px solid rgba(232,255,71,.4); border-radius: 999px; padding: 2px 8px;
+  }
 
-    footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 20px 28px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-    }
+  /* ---------- beta / registro ---------- */
+  .beta-wrap {
+    width: 100%; max-width: 680px; margin: 0 auto; text-align: center;
+    background: rgba(16,16,16,.72); backdrop-filter: blur(14px);
+    border: 1px solid rgba(245,245,240,.1); border-radius: 28px;
+    padding: clamp(32px, 6vw, 64px);
+  }
+  .beta-wrap h2 { margin-bottom: .6rem; }
+  .beta-wrap p.lead { margin: 0 auto 2rem; }
+  form { display: flex; gap: 12px; max-width: 480px; margin: 0 auto; }
+  input[type="email"] {
+    flex: 1; min-width: 0;
+    font-family: var(--font); font-size: 1rem; font-weight: 500;
+    background: var(--bg); color: var(--ink);
+    border: 2px solid rgba(245,245,240,.18); border-radius: 999px;
+    padding: 15px 24px; outline: none; transition: border-color .2s ease;
+  }
+  input[type="email"]::placeholder { color: rgba(245,245,240,.4); }
+  input[type="email"]:focus { border-color: var(--volt); }
+  .form-note { margin-top: 14px; font-size: .82rem; opacity: .5; }
+  .success {
+    display: none; margin-top: 1.2rem; color: var(--volt); font-weight: 600;
+  }
 
-    .social-links {
-      display: flex;
-      align-items: center;
-      gap: 22px;
-      opacity: 0;
-      animation: fadeIn 0.7s ease 2.1s forwards;
-    }
+  /* ---------- contacto + redes ---------- */
+  .contact-row {
+    display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 2.4rem;
+  }
+  .social {
+    display: flex; align-items: center; gap: 9px;
+    color: var(--ink); text-decoration: none; font-weight: 600; font-size: .95rem;
+    border: 1px solid rgba(245,245,240,.18); border-radius: 999px;
+    padding: 11px 20px; transition: all .2s ease;
+  }
+  .social:hover { border-color: var(--volt); color: var(--volt); transform: translateY(-2px); }
+  .social svg { width: 17px; height: 17px; fill: currentColor; }
 
-    .social-links a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #555555;
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
+  footer {
+    position: relative; z-index: 1;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+    padding: 28px clamp(20px, 5vw, 64px);
+    font-size: .82rem; color: rgba(245,245,240,.45);
+    border-top: 1px solid rgba(245,245,240,.08);
+    background: rgba(10,10,10,.8);
+  }
+  footer a { color: rgba(245,245,240,.6); text-decoration: none; margin-left: 18px; }
+  footer a:hover { color: var(--volt); }
 
-    .social-links a:hover { color: #E8FF47; }
+  /* ---------- reveal on scroll ---------- */
+  .reveal { opacity: 0; transform: translateY(34px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
 
-    .social-links svg {
-      width: 17px;
-      height: 17px;
-      fill: currentColor;
-    }
-
-    .btn-info {
-      opacity: 0;
-      animation: fadeIn 0.7s ease 2.1s forwards;
-      font-family: 'Inter', sans-serif;
-      font-weight: 500;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #0A0A0A;
-      background: #E8FF47;
-      border: none;
-      border-radius: 2px;
-      padding: 10px 22px;
-      cursor: pointer;
-      transition: opacity 0.2s ease;
-    }
-
-    .btn-info:hover { opacity: 0.8; }
-
-    .popup-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.65);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.35s ease;
-      z-index: 10;
-      backdrop-filter: blur(3px);
-      -webkit-backdrop-filter: blur(3px);
-    }
-
-    .popup-overlay.open {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .popup {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #111111;
-      border-radius: 20px 20px 0 0;
-      padding: 12px 28px 44px;
-      transform: translateY(100%);
-      transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
-      z-index: 20;
-      max-height: 92dvh;
-      overflow-y: auto;
-    }
-
-    .popup.open { transform: translateY(0); }
-
-    .popup-handle {
-      width: 36px;
-      height: 4px;
-      background: #2a2a2a;
-      border-radius: 2px;
-      margin: 0 auto 28px;
-    }
-
-    .popup-close {
-      position: absolute;
-      top: 18px;
-      right: 20px;
-      background: none;
-      border: none;
-      color: #444;
-      font-size: 20px;
-      line-height: 1;
-      cursor: pointer;
-      padding: 4px 6px;
-      transition: color 0.2s;
-    }
-
-    .popup-close:hover { color: #F5F5F0; }
-
-    .popup-title {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 900;
-      font-size: clamp(20px, 5vw, 26px);
-      color: #F5F5F0;
-      margin-bottom: 6px;
-    }
-
-    .popup-desc {
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      color: #555;
-      margin-bottom: 28px;
-      line-height: 1.5;
-    }
-
-    .popup-form {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .field label {
-      display: block;
-      font-family: 'Inter', sans-serif;
-      font-size: 9px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #444;
-      margin-bottom: 6px;
-    }
-
-    .input-wrap {
-      display: flex;
-      align-items: center;
-      background: #161616;
-      border: 1px solid #1e1e1e;
-      border-radius: 6px;
-      transition: border-color 0.2s;
-    }
-
-    .input-wrap:focus-within { border-color: #E8FF47; }
-
-    .input-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 12px;
-      color: #333;
-      flex-shrink: 0;
-      font-family: 'Inter', sans-serif;
-      font-size: 15px;
-    }
-
-    .input-icon svg {
-      width: 14px;
-      height: 14px;
-      fill: currentColor;
-    }
-
-    .input-wrap input {
-      flex: 1;
-      background: none;
-      border: none;
-      outline: none;
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      color: #F5F5F0;
-      padding: 13px 14px 13px 0;
-    }
-
-    .input-wrap input::placeholder { color: #2e2e2e; }
-
-    .notify-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      background: #161616;
-      border: 1px solid #1e1e1e;
-      border-radius: 6px;
-      padding: 14px 16px;
-      cursor: pointer;
-      margin-top: 2px;
-    }
-
-    .notify-row input[type="checkbox"] { display: none; }
-
-    .toggle-track {
-      width: 42px;
-      height: 23px;
-      background: #252525;
-      border-radius: 12px;
-      position: relative;
-      transition: background 0.25s;
-      flex-shrink: 0;
-    }
-
-    .notify-row input:checked ~ .toggle-track { background: #E8FF47; }
-
-    .toggle-thumb {
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 17px;
-      height: 17px;
-      background: #444;
-      border-radius: 50%;
-      transition: transform 0.25s, background 0.25s;
-    }
-
-    .notify-row input:checked ~ .toggle-track .toggle-thumb {
-      transform: translateX(19px);
-      background: #0A0A0A;
-    }
-
-    .notify-label {
-      font-family: 'Inter', sans-serif;
-      font-size: 12px;
-      color: #777;
-      line-height: 1.4;
-    }
-
-    .btn-submit {
-      width: 100%;
-      font-family: 'Inter', sans-serif;
-      font-weight: 500;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #0A0A0A;
-      background: #E8FF47;
-      border: none;
-      border-radius: 4px;
-      padding: 16px;
-      cursor: pointer;
-      margin-top: 6px;
-      transition: opacity 0.2s;
-    }
-
-    .btn-submit:hover { opacity: 0.85; }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .error-msg {
-      font-family: 'Inter', sans-serif;
-      font-size: 12px;
-      color: #ff4747;
-      text-align: center;
-      display: none;
-    }
-
-    .error-msg.show { display: block; }
-
-    .popup-success {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      padding: 24px 0 12px;
-      text-align: center;
-    }
-
-    .popup-success.show { display: flex; }
-    .popup-form.hide { display: none; }
-
-    .success-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: #E8FF4720;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #E8FF47;
-      font-size: 22px;
-    }
-
-    .success-title {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 900;
-      font-size: 20px;
-      color: #F5F5F0;
-    }
-
-    .success-msg {
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      color: #555;
-      line-height: 1.5;
-    }
-  </style>
+  /* ---------- responsive ---------- */
+  @media (max-width: 860px) {
+    .feature { flex-direction: column !important; align-items: flex-start; gap: 30px; }
+    section.right .half { margin-left: 0; text-align: left; }
+    section.right .half p { margin-left: 0; }
+    .half { max-width: 100%; }
+    .phone { margin: 0 auto; }
+    form { flex-direction: column; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-hint { animation: none; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+</style>
 </head>
 <body>
-  <div class="container">
 
-    <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200" aria-hidden="true">
-      <circle id="circle" cx="0" cy="0" r="75" fill="none" stroke="#E8FF47" stroke-width="18" stroke-linecap="round"/>
-      <path   id="diag"   d="M55,-55 L-55,55" fill="none" stroke="#E8FF47" stroke-width="20" stroke-linecap="round"/>
-    </svg>
+<div class="progress" id="progress"></div>
+<div id="bg"></div>
 
-    <h1 class="title">WØRN</h1>
-    <p class="subtitle">Your style. Your identity.</p>
-    <span class="coming-soon">Summer 2026</span>
+<nav>
+  <a class="wordmark" href="#top">W<span>Ø</span>RN</a>
+  <a class="nav-cta" href="#beta">Únete a la beta</a>
+</nav>
 
-    <div class="social-links">
-      <a href="https://www.instagram.com/worn.community/" aria-label="Instagram">
-        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-      </a>
-      <a href="https://www.tiktok.com/@worn.community" aria-label="TikTok">
-        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.77a4.85 4.85 0 0 1-1.01-.08z"/></svg>
-      </a>
-      <a href="https://x.com/worncom" aria-label="X">
-        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.629 5.905-5.629zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      </a>
+<div class="content" id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="half">
+      <div class="kicker reveal">Beta · iOS · 2026</div>
+      <h1 class="reveal">Lo que llevas,<br><span class="volt">cuenta.</span></h1>
+      <p class="lead sub reveal">WØRN es la red social de tu armario. Digitaliza tus prendas, monta outfits y comparte lo que llevas cada día.</p>
+      <div class="hero-ctas reveal">
+        <a class="btn-primary" href="#beta">Quiero la beta</a>
+        <a class="btn-ghost" href="#armario">Ver la app ↓</a>
+      </div>
+      <div class="scroll-hint">scroll para explorar ↓</div>
     </div>
+  </section>
 
-  </div>
-
-  <footer>
-    <button class="btn-info" id="btn-info">Solicitar información</button>
-  </footer>
-
-  <div class="popup-overlay" id="popup-overlay"></div>
-
-  <div class="popup" id="popup" role="dialog" aria-modal="true" aria-labelledby="popup-title">
-    <div class="popup-handle"></div>
-    <button class="popup-close" id="popup-close" aria-label="Cerrar">✕</button>
-
-    <h2 class="popup-title" id="popup-title">Únete a la lista de espera</h2>
-    <p class="popup-desc">Déjanos tus datos y te avisamos cuando WØRN esté listo.</p>
-
-    <form class="popup-form" id="popup-form" novalidate>
-
-      <div class="field">
-        <label for="f-email">Correo electrónico *</label>
-        <div class="input-wrap">
-          <span class="input-icon">@</span>
-          <input id="f-email" type="email" placeholder="tu@correo.com" autocomplete="email" required />
+  <!-- ARMARIO -->
+  <section id="armario">
+    <div class="feature">
+      <div class="half">
+        <div class="kicker reveal">01 — Armario</div>
+        <h2 class="reveal">Tu armario,<br>en tu bolsillo.</h2>
+        <p class="lead reveal">Haz una foto a cualquier prenda y WØRN la recorta y cataloga sola. Marca, categoría, color. Todo tu fondo de armario, buscable en segundos.</p>
+      </div>
+      <div class="phone reveal">
+        <div class="screen">
+          <div class="app-bar"><b>W<span>Ø</span>RN</b><span class="chip">Armario</span></div>
+          <div class="grid2">
+            <div class="garment volt-b"><i>🧥</i></div>
+            <div class="garment"><i>👕</i></div>
+            <div class="garment"><i>👖</i></div>
+            <div class="garment"><i>👟</i></div>
+            <div class="garment"><i>🧢</i></div>
+            <div class="garment volt-b"><i>🕶️</i></div>
+          </div>
         </div>
       </div>
-
-      <div class="field">
-        <label for="f-ig">Instagram</label>
-        <div class="input-wrap">
-          <span class="input-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-          </span>
-          <input id="f-ig" type="text" placeholder="@usuario" autocomplete="off" />
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="f-tt">TikTok</label>
-        <div class="input-wrap">
-          <span class="input-icon">
-            <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.77a4.85 4.85 0 0 1-1.01-.08z"/></svg>
-          </span>
-          <input id="f-tt" type="text" placeholder="@usuario" autocomplete="off" />
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="f-x">X / Twitter</label>
-        <div class="input-wrap">
-          <span class="input-icon">
-            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.629 5.905-5.629zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          </span>
-          <input id="f-x" type="text" placeholder="@usuario" autocomplete="off" />
-        </div>
-      </div>
-
-      <label class="notify-row">
-        <input type="checkbox" id="f-notify" checked />
-        <div class="toggle-track"><span class="toggle-thumb"></span></div>
-        <span class="notify-label">Avisarme cuando la aplicación esté disponible</span>
-      </label>
-
-      <p class="error-msg" id="error-msg">Por favor introduce un email válido.</p>
-
-      <button type="submit" class="btn-submit" id="btn-submit">Unirme a la lista</button>
-    </form>
-
-    <div class="popup-success" id="popup-success">
-      <div class="success-icon">✓</div>
-      <p class="success-title">¡Ya estás dentro!</p>
-      <p class="success-msg">Te avisaremos en cuanto WØRN<br>esté listo para usar.</p>
     </div>
+  </section>
+
+  <!-- OUTFITS -->
+  <section class="right">
+    <div class="feature">
+      <div class="half">
+        <div class="kicker reveal">02 — Outfits</div>
+        <h2 class="reveal">Monta el fit<br>antes de vestirte.</h2>
+        <p class="lead reveal">Combina tus prendas en outfits, guárdalos en colecciones y ten claro qué te pones mañana. Cero repetir sin querer.</p>
+      </div>
+      <div class="phone reveal">
+        <div class="screen">
+          <div class="app-bar"><b>W<span>Ø</span>RN</b><span class="chip">Outfit</span></div>
+          <div class="collage">
+            <div>🧥</div>
+            <div>👖</div>
+            <div>👟</div>
+          </div>
+          <div class="outfit-name"><b>Fit — viernes</b><span class="likes">♥ 128</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORNS -->
+  <section>
+    <div class="feature">
+      <div class="half">
+        <div class="kicker reveal">03 — WORNs</div>
+        <h2 class="reveal">Enseña el fit<br>del día. 24 horas.</h2>
+        <p class="lead reveal">Los WORNs son tu outfit diario en formato story. Publica cada día y mantén viva tu racha 🔥. La constancia también es estilo.</p>
+      </div>
+      <div class="phone reveal">
+        <div class="screen">
+          <div class="app-bar"><b>W<span>Ø</span>RN</b><span class="chip">WORNs</span></div>
+          <div class="stories">
+            <div class="story live">🧍</div>
+            <div class="story live">🧍‍♀️</div>
+            <div class="story">🧍</div>
+            <div class="story">🧍‍♂️</div>
+          </div>
+          <div class="streak">
+            <div class="n">🔥 17</div>
+            <div><b>días de racha</b><small>No la dejes morir. Sube el fit de hoy.</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEED -->
+  <section class="right">
+    <div class="feature">
+      <div class="half">
+        <div class="kicker reveal">04 — Comunidad</div>
+        <h2 class="reveal">Un feed donde<br>la ropa habla.</h2>
+        <p class="lead reveal">Sigue a gente con tu rollo, dale like a los fits que te inspiran y descubre qué prendas llevan. Cada post lleva etiquetadas las piezas.</p>
+      </div>
+      <div class="phone reveal">
+        <div class="screen">
+          <div class="app-bar"><b>W<span>Ø</span>RN</b><span class="chip">Feed</span></div>
+          <div class="post">
+            <div class="ph">🧍‍♂️</div>
+            <div class="meta"><b>@romero</b><span class="likes">♥ 342</span></div>
+            <div class="tagrow">
+              <span class="tag">bomber</span><span class="tag">cargo</span><span class="tag">runners</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BETA + CONTACTO -->
+  <section id="beta">
+    <div class="beta-wrap reveal">
+      <div class="kicker">Acceso anticipado</div>
+      <h2>Entra en la <span class="volt">beta.</span></h2>
+      <p class="lead">Plazas limitadas en TestFlight. Déjanos tu email y te mandamos la invitación en cuanto abra tu hueco.</p>
+
+      <form id="betaForm">
+        <input type="email" id="betaEmail" placeholder="tu@email.com" required>
+        <button class="btn-primary" type="submit">Quiero la beta</button>
+      </form>
+      <div class="form-note">Solo te escribiremos para la beta. Nada de spam.</div>
+      <div class="success" id="betaSuccess">✓ ¡Dentro! Te llega la invitación pronto.</div>
+
+      <div class="contact-row">
+        <!-- Cambia los handles por los reales -->
+        <a class="social" href="https://instagram.com/worn.community" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9-.1-1.3-.1-1.6-.1-4.8s0-3.6.1-4.8C2.4 4 4 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 3.6a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zm0 10.2a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-10.5a1.4 1.4 0 1 0 0-2.9 1.4 1.4 0 0 0 0 2.9z"/></svg>
+          Instagram
+        </a>
+        <a class="social" href="https://tiktok.com/@worn.community" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M19.6 6.7a5.4 5.4 0 0 1-3.2-1V15a6.1 6.1 0 1 1-6.1-6.1c.3 0 .7 0 1 .1v3.3a2.9 2.9 0 1 0 2 2.7V1.9h3.1a5.4 5.4 0 0 0 3.2 4.4z"/></svg>
+          TikTok
+        </a>
+        <a class="social" href="mailto:hola@worn.community">
+          <svg viewBox="0 0 24 24"><path d="M2 5.5A2.5 2.5 0 0 1 4.5 3h15A2.5 2.5 0 0 1 22 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 18.5v-13zm2.6-.1L12 11.6l7.4-6.2H4.6zM20 7.2l-7.4 6.2a1 1 0 0 1-1.2 0L4 7.2v11.3c0 .3.2.5.5.5h15c.3 0 .5-.2.5-.5V7.2z"/></svg>
+          hola@worn.community
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div>© 2026 WØRN · Marca registrada</div>
+  <div>
+    <a href="https://worn.community/privacy" target="_blank" rel="noopener">Privacidad</a>
+    <a href="https://worn.community/terms" target="_blank" rel="noopener">Términos</a>
   </div>
+</footer>
 
-  <script>
-    // ── Configuración Supabase ──────────────────────────────
-    const SUPABASE_URL = 'https://eiwoeywswuwqosojunrg.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpd29leXdzd3V3cW9zb2p1bnJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwODkyMTUsImV4cCI6MjA5MTY2NTIxNX0.7sssT-cuFYFeirmW94ugqqUiqi28KXQOSdF2ElBi2yM';
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* =========================================================
+   WØRN — Ø en 3D real, extruido desde el SVG del logo.
+   Scroll (0→1) controla rotación, posición y zoom con lerp.
+   ========================================================= */
 
-    // ── Popup ───────────────────────────────────────────────
-    const btnInfo  = document.getElementById('btn-info');
-    const overlay  = document.getElementById('popup-overlay');
-    const popup    = document.getElementById('popup');
-    const closeBtn = document.getElementById('popup-close');
-    const form     = document.getElementById('popup-form');
-    const success  = document.getElementById('popup-success');
-    const errorMsg = document.getElementById('error-msg');
-    const btnSubmit = document.getElementById('btn-submit');
+// El path EXACTO de Ø_Color.svg (viewBox 1024x1024).
+// Si Puyi entrega el V.9, pega aquí el nuevo atributo "d" y listo.
+const LOGO_PATH = "M741.01,338.63l43.88-43.88,14.12-14.12h-111.1l-2.42,2.42-89.4,89.4-60.13,60.17-104.41,104.37-18.44,18.44-33.63,33.63c-9.21-15.69-15.45-32.72-18.58-50.74-1.51-8.67-2.28-17.52-2.28-26.33,0-84.39,68.67-153.05,153.09-153.05,8.82,0,17.66.77,26.28,2.27l4.23.74,3.04-3.04,50.37-50.37,9.09-9.09-12.04-4.5c-25.87-9.68-53.11-14.58-80.97-14.58-127.74,0-231.66,103.9-231.66,231.62,0,27.89,4.91,55.15,14.58,81.01,6.93,18.65,16.35,36.41,28.02,52.88l-83.52,83.52-14.12,14.12h111.1l2.42-2.42,44.74-44.74,44.53-44.49,2.43-2.42v-.04l38.39-38.39,18.48-18.44,104.38-104.42,52.7-52.7c9.16,15.76,15.34,32.83,18.4,50.88,1.43,8.47,2.16,17.11,2.16,25.66,0,84.39-68.66,153.04-153.05,153.04-8.58,0-17.23-.73-25.71-2.16l-4.21-.71-3.02,3.02-50.45,50.45-9.11,9.11,12.08,4.49c25.66,9.54,52.72,14.37,80.42,14.37,127.71,0,231.61-103.9,231.61-231.61,0-27.7-4.84-54.75-14.37-80.42-6.92-18.75-16.28-36.55-27.88-53.01l22.05-22.05,17.91-17.9Z";
 
-    function openPopup() {
-      popup.classList.add('open');
-      overlay.classList.add('open');
-      document.body.style.overflow = 'hidden';
+// --- mini parser de path SVG (M, l, h, v, c, z) -> THREE.Shape ---
+function pathToShape(d) {
+  const shape = new THREE.Shape();
+  const tokens = d.match(/[MmLlHhVvCcZz]|-?\d*\.?\d+/g);
+  let i = 0, x = 0, y = 0, cmd = '';
+  const num = () => parseFloat(tokens[i++]);
+  const isNum = () => i < tokens.length && /[\d.-]/.test(tokens[i][0]);
+
+  while (i < tokens.length) {
+    const t = tokens[i];
+    if (/[A-Za-z]/.test(t)) { cmd = t; i++; }
+    switch (cmd) {
+      case 'M': x = num(); y = num(); shape.moveTo(x, -y); cmd = 'L'; break;
+      case 'm': x += num(); y += num(); shape.moveTo(x, -y); cmd = 'l'; break;
+      case 'L': x = num(); y = num(); shape.lineTo(x, -y); break;
+      case 'l': x += num(); y += num(); shape.lineTo(x, -y); break;
+      case 'H': x = num(); shape.lineTo(x, -y); break;
+      case 'h': x += num(); shape.lineTo(x, -y); break;
+      case 'V': y = num(); shape.lineTo(x, -y); break;
+      case 'v': y += num(); shape.lineTo(x, -y); break;
+      case 'C': {
+        const c1x = num(), c1y = num(), c2x = num(), c2y = num();
+        x = num(); y = num();
+        shape.bezierCurveTo(c1x, -c1y, c2x, -c2y, x, -y);
+        break;
+      }
+      case 'c': {
+        const c1x = x + num(), c1y = y + num(), c2x = x + num(), c2y = y + num();
+        x += num(); y += num();
+        shape.bezierCurveTo(c1x, -c1y, c2x, -c2y, x, -y);
+        break;
+      }
+      case 'Z': case 'z': shape.closePath(); if (isNum()) i++; break;
+      default: i++; // seguridad
     }
+  }
+  return shape;
+}
 
-    function closePopup() {
-      popup.classList.remove('open');
-      overlay.classList.remove('open');
-      document.body.style.overflow = '';
-    }
+// --- escena ---
+const container = document.getElementById('bg');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 0, 6);
 
-    btnInfo.addEventListener('click', openPopup);
-    overlay.addEventListener('click', closePopup);
-    closeBtn.addEventListener('click', closePopup);
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePopup(); });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.outputEncoding = THREE.sRGBEncoding;
+container.appendChild(renderer.domElement);
 
-    popup.addEventListener('transitionend', () => {
-      if (!popup.classList.contains('open')) {
-        form.classList.remove('hide');
-        success.classList.remove('show');
-        errorMsg.classList.remove('show');
-        form.reset();
-      }
-    });
+// --- logo extruido ---
+const shape = pathToShape(LOGO_PATH);
+const geo = new THREE.ExtrudeGeometry(shape, {
+  depth: 70,
+  bevelEnabled: true,
+  bevelThickness: 8,
+  bevelSize: 8,
+  bevelSegments: 4,
+  curveSegments: 28
+});
+geo.center();
 
-    // ── Submit → Supabase ───────────────────────────────────
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+const mat = new THREE.MeshPhysicalMaterial({
+  color: 0xE8FF47,
+  metalness: 0.35,
+  roughness: 0.28,
+  clearcoat: 0.6,
+  clearcoatRoughness: 0.25
+});
+const logo = new THREE.Mesh(geo, mat);
+const S = 0.0042; // 1024 unidades SVG -> ~4.3 unidades de escena
+logo.scale.set(S, S, S);
+scene.add(logo);
 
-      const email    = document.getElementById('f-email').value.trim();
-      const instagram = document.getElementById('f-ig').value.trim();
-      const tiktok   = document.getElementById('f-tt').value.trim();
-      const twitter  = document.getElementById('f-x').value.trim();
-      const notify   = document.getElementById('f-notify').checked;
+// --- luces ---
+scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+const key = new THREE.DirectionalLight(0xffffff, 1.2);
+key.position.set(4, 6, 7); scene.add(key);
+const rim = new THREE.DirectionalLight(0x6a7bff, 0.8);
+rim.position.set(-6, -3, -5); scene.add(rim);
+const fill = new THREE.PointLight(0xE8FF47, 0.5, 20);
+fill.position.set(0, 0, 4); scene.add(fill);
 
-      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        errorMsg.classList.add('show');
-        return;
-      }
+// --- scroll 0→1 ---
+let progress = 0;
+const bar = document.getElementById('progress');
+function onScroll() {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  progress = max > 0 ? Math.min(1, scrollY / max) : 0;
+  bar.style.width = (progress * 100) + '%';
+}
+addEventListener('scroll', onScroll, { passive: true });
+onScroll();
 
-      errorMsg.classList.remove('show');
-      btnSubmit.disabled = true;
-      btnSubmit.textContent = 'Enviando...';
+// --- keyframes: estado del logo por tramo de scroll ---
+// p: progreso | x: posición horizontal | ry/rx: rotación | s: escala | z: cámara
+const KF = [
+  { p: 0.00, x:  1.4, ry:  0.0,  rx: 0.05, s: 1.00, z: 6.0 },  // hero: a la derecha del texto
+  { p: 0.18, x: -1.6, ry:  2.2,  rx: 0.25, s: 0.72, z: 6.0 },  // armario: gira a la izquierda
+  { p: 0.38, x:  1.6, ry:  4.4,  rx: -0.2, s: 0.72, z: 6.0 },  // outfits: a la derecha
+  { p: 0.58, x: -1.6, ry:  6.6,  rx: 0.3,  s: 0.72, z: 6.0 },  // worns
+  { p: 0.78, x:  1.6, ry:  8.8,  rx: -0.25,s: 0.72, z: 6.0 },  // feed
+  { p: 1.00, x:  0.0, ry: 12.56, rx: 0.0,  s: 1.15, z: 5.0 }   // beta: centrado, grande, de frente
+];
+function stateAt(p) {
+  let a = KF[0], b = KF[KF.length - 1];
+  for (let k = 0; k < KF.length - 1; k++) {
+    if (p >= KF[k].p && p <= KF[k + 1].p) { a = KF[k]; b = KF[k + 1]; break; }
+  }
+  const span = b.p - a.p || 1;
+  let t = (p - a.p) / span;
+  t = t * t * (3 - 2 * t); // smoothstep entre tramos
+  const L = (u, v) => u + (v - u) * t;
+  return { x: L(a.x, b.x), ry: L(a.ry, b.ry), rx: L(a.rx, b.rx), s: L(a.s, b.s), z: L(a.z, b.z) };
+}
 
-      try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'Prefer': 'return=minimal'
-          },
-          body: JSON.stringify({
-            email,
-            instagram: instagram || null,
-            tiktok: tiktok || null,
-            twitter: twitter || null,
-            notify
-          })
-        });
+// parallax sutil de ratón
+let mx = 0, my = 0;
+addEventListener('pointermove', e => {
+  mx = (e.clientX / innerWidth - 0.5);
+  my = (e.clientY / innerHeight - 0.5);
+});
 
-        if (res.ok || res.status === 201) {
-          form.classList.add('hide');
-          success.classList.add('show');
-          setTimeout(closePopup, 2500);
-        } else {
-          const data = await res.json();
-          // Email duplicado
-          if (data?.code === '23505') {
-            form.classList.add('hide');
-            success.classList.add('show');
-            setTimeout(closePopup, 2500);
-          } else {
-            throw new Error('Error al guardar');
-          }
-        }
-      } catch (err) {
-        errorMsg.textContent = 'Algo salió mal. Inténtalo de nuevo.';
-        errorMsg.classList.add('show');
-      } finally {
-        btnSubmit.disabled = false;
-        btnSubmit.textContent = 'Unirme a la lista';
-      }
-    });
-  </script>
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
 
+const isMobile = matchMedia('(max-width: 860px)').matches;
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  const st = stateAt(progress);
+
+  // en móvil el logo va centrado detrás del contenido, más pequeño
+  const targetX = isMobile ? 0 : st.x;
+  const targetS = (isMobile ? st.s * 0.8 : st.s) * S;
+
+  const LERP = 0.07;
+  logo.position.x += (targetX - logo.position.x) * LERP;
+  logo.rotation.y += (st.ry + mx * 0.35 - logo.rotation.y) * LERP;
+  logo.rotation.x += (st.rx + my * 0.25 - logo.rotation.x) * LERP;
+  logo.scale.x += (targetS - logo.scale.x) * LERP;
+  logo.scale.y += (targetS - logo.scale.y) * LERP;
+  logo.scale.z += (targetS - logo.scale.z) * LERP;
+  camera.position.z += (st.z - camera.position.z) * LERP;
+
+  // vida en reposo: flotación suave
+  logo.position.y = Math.sin(t * 0.9) * 0.09;
+
+  renderer.render(scene, camera);
+}
+animate();
+
+// --- reveal de secciones ---
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.18 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// --- form beta ---
+// Ahora mismo es front-only. Para conectarlo a Supabase, crea una tabla
+// `beta_signups` (id, email, created_at) con RLS de INSERT anónimo y descomenta:
+//
+// await fetch('https://eiwoeyswuwqosojunrg.supabase.co/rest/v1/beta_signups', {
+//   method: 'POST',
+//   headers: {
+//     'Content-Type': 'application/json',
+//     'apikey': 'TU_ANON_KEY',
+//     'Authorization': 'Bearer TU_ANON_KEY'
+//   },
+//   body: JSON.stringify({ email })
+// });
+//
+document.getElementById('betaForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const email = document.getElementById('betaEmail').value.trim();
+  if (!email) return;
+  document.getElementById('betaForm').style.display = 'none';
+  document.querySelector('.form-note').style.display = 'none';
+  document.getElementById('betaSuccess').style.display = 'block';
+});
+</script>
 </body>
 </html>
