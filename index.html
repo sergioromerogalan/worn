@@ -39,6 +39,9 @@
   #bg { position: fixed; inset: 0; z-index: 0; }
   #bg canvas { display: block; }
 
+  /* legibilidad cuando el logo pasa por detrás del texto */
+  h1, h2, p.lead { text-shadow: 0 2px 30px rgba(10,10,10,.85), 0 0 60px rgba(10,10,10,.6); }
+
   /* ---------- nav ---------- */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 40;
@@ -260,6 +263,11 @@
 
   /* ---------- responsive ---------- */
   @media (max-width: 860px) {
+    /* velo entre el 3D y el contenido: el logo se ve, el texto se lee */
+    #bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(10,10,10,.35), rgba(10,10,10,.62) 40%, rgba(10,10,10,.62));
+    }
     .feature { flex-direction: column !important; align-items: flex-start; gap: 30px; }
     section.right .half { margin-left: 0; text-align: left; }
     section.right .half p { margin-left: 0; }
@@ -543,14 +551,15 @@ addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
 // --- keyframes: estado del logo por tramo de scroll ---
-// p: progreso | x: posición horizontal | ry/rx: rotación | s: escala | z: cámara
+// p: progreso | xf: posición horizontal como FRACCIÓN del ancho visible (-0.5..0.5)
+// ry/rx: rotación | s: escala relativa | z: cámara
 const KF = [
-  { p: 0.00, x:  1.4, ry:  0.0,  rx: 0.05, s: 1.00, z: 6.0 },  // hero: a la derecha del texto
-  { p: 0.18, x: -1.6, ry:  2.2,  rx: 0.25, s: 0.72, z: 6.0 },  // armario: gira a la izquierda
-  { p: 0.38, x:  1.6, ry:  4.4,  rx: -0.2, s: 0.72, z: 6.0 },  // outfits: a la derecha
-  { p: 0.58, x: -1.6, ry:  6.6,  rx: 0.3,  s: 0.72, z: 6.0 },  // worns
-  { p: 0.78, x:  1.6, ry:  8.8,  rx: -0.25,s: 0.72, z: 6.0 },  // feed
-  { p: 1.00, x:  0.0, ry: 12.56, rx: 0.0,  s: 1.15, z: 5.0 }   // beta: centrado, grande, de frente
+  { p: 0.00, xf:  0.26, ry:  0.0,  rx: 0.05, s: 1.00, z: 6.0 },  // hero: a la derecha del texto
+  { p: 0.18, xf: -0.26, ry:  2.2,  rx: 0.25, s: 0.78, z: 6.0 },  // armario: a la izquierda
+  { p: 0.38, xf:  0.26, ry:  4.4,  rx: -0.2, s: 0.78, z: 6.0 },  // outfits: a la derecha
+  { p: 0.58, xf: -0.26, ry:  6.6,  rx: 0.3,  s: 0.78, z: 6.0 },  // worns
+  { p: 0.78, xf:  0.26, ry:  8.8,  rx: -0.25,s: 0.78, z: 6.0 },  // feed
+  { p: 1.00, xf:  0.00, ry: 12.56, rx: 0.0,  s: 1.12, z: 5.2 }   // beta: centrado, de frente
 ];
 function stateAt(p) {
   let a = KF[0], b = KF[KF.length - 1];
@@ -561,7 +570,7 @@ function stateAt(p) {
   let t = (p - a.p) / span;
   t = t * t * (3 - 2 * t); // smoothstep entre tramos
   const L = (u, v) => u + (v - u) * t;
-  return { x: L(a.x, b.x), ry: L(a.ry, b.ry), rx: L(a.rx, b.rx), s: L(a.s, b.s), z: L(a.z, b.z) };
+  return { xf: L(a.xf, b.xf), ry: L(a.ry, b.ry), rx: L(a.rx, b.rx), s: L(a.s, b.s), z: L(a.z, b.z) };
 }
 
 // parallax sutil de ratón
@@ -577,17 +586,36 @@ addEventListener('resize', () => {
   renderer.setSize(innerWidth, innerHeight);
 });
 
-const isMobile = matchMedia('(max-width: 860px)').matches;
+const mqMobile = matchMedia('(max-width: 860px)');
 const clock = new THREE.Clock();
+
+// Tamaño "natural" del logo en unidades de mundo (1024 SVG * S)
+const LOGO_WORLD = 1024 * S;
 
 function animate() {
   requestAnimationFrame(animate);
   const t = clock.getElapsedTime();
   const st = stateAt(progress);
+  const isMobile = mqMobile.matches;
 
-  // en móvil el logo va centrado detrás del contenido, más pequeño
-  const targetX = isMobile ? 0 : st.x;
-  const targetS = (isMobile ? st.s * 0.8 : st.s) * S;
+  // Cuánto mundo se ve a la distancia de la cámara (esto es lo que
+  // hace que TODO sea relativo al viewport real, no a números fijos)
+  const visH = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * st.z;
+  const visW = visH * camera.aspect;
+
+  let targetX, fit;
+  if (isMobile) {
+    // móvil: centrado detrás del contenido (con el velo CSS encima),
+    // como mucho el 78% del ancho de pantalla
+    targetX = 0;
+    fit = Math.min(1, (visW * 0.78) / LOGO_WORLD, (visH * 0.55) / LOGO_WORLD);
+  } else {
+    // desktop: a un lado, ocupando la mitad libre que deja el texto,
+    // nunca más del 42% del ancho ni del 72% del alto visibles
+    targetX = st.xf * visW;
+    fit = Math.min(1, (visW * 0.42) / LOGO_WORLD, (visH * 0.72) / LOGO_WORLD);
+  }
+  const targetS = st.s * fit * S;
 
   const LERP = 0.07;
   logo.position.x += (targetX - logo.position.x) * LERP;
@@ -598,8 +626,8 @@ function animate() {
   logo.scale.z += (targetS - logo.scale.z) * LERP;
   camera.position.z += (st.z - camera.position.z) * LERP;
 
-  // vida en reposo: flotación suave
-  logo.position.y = Math.sin(t * 0.9) * 0.09;
+  // vida en reposo: flotación suave, proporcional al tamaño visible
+  logo.position.y = Math.sin(t * 0.9) * visH * 0.018;
 
   renderer.render(scene, camera);
 }
