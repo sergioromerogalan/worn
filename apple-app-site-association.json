@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["F592YQ4255.com.romero.WORN"],
+        "components": [
+          { "/": "/post/*",    "comment": "Posts" },
+          { "/": "/outfit/*",  "comment": "Outfits" },
+          { "/": "/garment/*", "comment": "Prendas" },
+          { "/": "/profile/*", "comment": "Perfiles" }
+        ]
+      }
+    ]
+  }
+}

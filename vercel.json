@@ -1,0 +1,21 @@
+{
+  "headers": [
+    {
+      "source": "/apple-app-site-association.json",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Cache-Control", "value": "no-cache" }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/.well-known/apple-app-site-association",
+      "destination": "/apple-app-site-association.json"
+    },
+    { "source": "/post/:path*",    "destination": "/deeplink.html" },
+    { "source": "/outfit/:path*",  "destination": "/deeplink.html" },
+    { "source": "/garment/:path*", "destination": "/deeplink.html" },
+    { "source": "/profile/:path*", "destination": "/deeplink.html" }
+  ]
+}

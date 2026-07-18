@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WØRN</title>
+  <link rel="icon" type="image/svg+xml" href="/worn_logo_volt_bueno.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0A0A0A;
+      color: #F5F5F0;
+      font-family: 'Inter', sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      gap: 0;
+    }
+
+    .logo {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.1s forwards;
+    }
+
+    .wordmark {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 900;
+      font-size: clamp(48px, 16vw, 80px);
+      color: #F5F5F0;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.25s forwards;
+      margin-bottom: 12px;
+    }
+
+    .tagline {
+      font-size: 13px;
+      color: #555;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.4s forwards;
+      margin-bottom: 52px;
+    }
+
+    .card {
+      background: #111;
+      border: 1px solid #1E1E1E;
+      border-radius: 20px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.55s forwards;
+      text-align: center;
+    }
+
+    .card-label {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #444;
+    }
+
+    .card-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 900;
+      font-size: 22px;
+      color: #F5F5F0;
+      line-height: 1.2;
+    }
+
+    .card-sub {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 15px 24px;
+      background: #E8FF47;
+      color: #0A0A0A;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .btn-primary:hover { opacity: 0.85; }
+
+    .btn-secondary {
+      font-size: 12px;
+      color: #444;
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+
+    .btn-secondary:hover { color: #888; }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(10,10,10,0.2);
+      border-top-color: #0A0A0A;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    .spinner.show { display: block; }
+
+    .status {
+      font-size: 11px;
+      color: #333;
+      min-height: 16px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; opacity: 1 !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Logo Ø animado -->
+  <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200" aria-hidden="true">
+    <circle cx="0" cy="0" r="75" fill="none" stroke="#E8FF47" stroke-width="18" stroke-linecap="round"/>
+    <path d="M55,-55 L-55,55" fill="none" stroke="#E8FF47" stroke-width="20" stroke-linecap="round"/>
+  </svg>
+
+  <h1 class="wordmark">WØRN</h1>
+  <p class="tagline">Tu armario. Tu comunidad.</p>
+
+  <div class="card">
+    <span class="card-label" id="card-label">Contenido compartido</span>
+    <p class="card-title" id="card-title">Abriendo en WORN...</p>
+    <p class="card-sub" id="card-sub">Si la app no se abre automáticamente,<br>descárgala gratis en el App Store.</p>
+
+    <a class="btn-primary" id="btn-open" href="#">
+      <div class="spinner" id="spinner"></div>
+      <span id="btn-text">Abrir en WORN</span>
+    </a>
+
+    <a class="btn-secondary"
+       href="https://apps.apple.com/app/id6772600366"
+       id="btn-store">
+      Descargar WORN en el App Store →
+    </a>
+
+    <p class="status" id="status"></p>
+  </div>
+
+  <script>
+    const APP_STORE = 'https://apps.apple.com/app/id6772600366';
+
+    // Parsear la ruta actual → tipo + valor
+    const path = window.location.pathname; // e.g. /post/abc-123
+    const parts = path.split('/').filter(Boolean);
+    const kind  = parts[0]; // post | outfit | garment | profile
+    const value = parts[1]; // UUID o username
+
+    // Etiquetas amigables
+    const labels = {
+      post:    'Publicación compartida',
+      outfit:  'Outfit compartido',
+      garment: 'Prenda compartida',
+      profile: 'Perfil de usuario',
+    };
+
+    const titles = {
+      post:    'Ver esta publicación en WORN',
+      outfit:  'Ver este outfit en WORN',
+      garment: 'Ver esta prenda en WORN',
+      profile: value ? `@${value} en WORN` : 'Perfil en WORN',
+    };
+
+    if (labels[kind]) {
+      document.getElementById('card-label').textContent = labels[kind];
+      document.getElementById('card-title').textContent = titles[kind] || 'Abrir en WORN';
+    }
+
+    // URL del custom scheme: worn://post/UUID
+    const deepUrl = value
+      ? `worn://${kind}/${value}`
+      : `worn://${kind}`;
+
+    const btnOpen   = document.getElementById('btn-open');
+    const btnText   = document.getElementById('btn-text');
+    const spinner   = document.getElementById('spinner');
+    const status    = document.getElementById('status');
+    const btnStore  = document.getElementById('btn-store');
+
+    function tryOpenApp() {
+      spinner.classList.add('show');
+      btnText.textContent = 'Abriendo...';
+      btnOpen.style.pointerEvents = 'none';
+
+      // Intento de apertura via custom scheme
+      const start = Date.now();
+      window.location.href = deepUrl;
+
+      // Si el usuario sigue aquí tras 2s → redirigir al App Store
+      setTimeout(() => {
+        const elapsed = Date.now() - start;
+        // Si la página quedó en segundo plano y volvió, elapsed será >> 2000ms
+        if (elapsed < 2500) {
+          // La app no se ha abierto → App Store
+          status.textContent = 'WORN no está instalado. Redirigiendo al App Store...';
+          setTimeout(() => {
+            window.location.href = APP_STORE;
+          }, 800);
+        } else {
+          // El usuario volvió desde la app
+          spinner.classList.remove('show');
+          btnText.textContent = 'Abrir en WORN';
+          btnOpen.style.pointerEvents = '';
+        }
+      }, 2000);
+    }
+
+    btnOpen.addEventListener('click', (e) => {
+      e.preventDefault();
+      tryOpenApp();
+    });
+
+    // Auto-intentar apertura tras breve delay (da tiempo a que cargue la página)
+    setTimeout(tryOpenApp, 900);
+  </script>
+
+</body>
+</html>
