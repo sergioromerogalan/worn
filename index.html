@@ -4,11 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WØRN — La red social de tu armario</title>
-<meta name="description" content="WØRN. Digitaliza tu armario, monta outfits y comparte lo que llevas. Beta en iOS.">
+<meta name="description" content="WØRN. Digitaliza tu armario, monta outfits y comparte lo que llevas cada día. Gratis en el App Store.">
+<meta name="theme-color" content="#0A0A0A">
+
+<!-- Banner nativo de descarga en Safari iOS -->
+<meta name="apple-itunes-app" content="app-id=6772600366">
+
+<!-- Open Graph: cómo se ve el enlace al compartirlo en TikTok, IG o WhatsApp -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://worn.community/">
+<meta property="og:title" content="WØRN — La red social de tu armario">
+<meta property="og:description" content="Digitaliza tu armario, monta outfits y comparte lo que llevas cada día. Gratis en el App Store.">
+<meta property="og:image" content="https://worn.community/og.png">
+<meta property="og:locale" content="es_ES">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WØRN — La red social de tu armario">
+<meta name="twitter:description" content="Digitaliza tu armario, monta outfits y comparte lo que llevas cada día. Gratis en el App Store.">
+<meta name="twitter:image" content="https://worn.community/og.png">
+
+<link rel="icon" type="image/svg+xml" href="/worn_logo_volt_bueno.svg">
+<link rel="canonical" href="https://worn.community/">
 
 <!-- General Sans (Fontshare) -->
 <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
-
 <style>
   :root {
     --bg: #0A0A0A;
@@ -17,7 +35,6 @@
     --volt: #E8FF47;
     --font: 'General Sans', -apple-system, 'Helvetica Neue', system-ui, sans-serif;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
@@ -59,9 +76,11 @@
     color: var(--bg); background: var(--volt);
     padding: 10px 22px; border-radius: 999px; border: none;
     text-decoration: none; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 7px;
     transition: transform .2s ease, box-shadow .2s ease;
   }
   .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(232,255,71,.35); }
+  .nav-cta svg { width: 15px; height: 15px; fill: currentColor; }
 
   /* ---------- layout de secciones ---------- */
   .content { position: relative; z-index: 1; }
@@ -73,7 +92,6 @@
   .half { max-width: 560px; }
   section.right .half { text-align: right; }
   section.right .half p { margin-left: auto; }
-
   .kicker {
     color: var(--volt); font-weight: 600; font-size: .8rem;
     letter-spacing: .22em; text-transform: uppercase; margin-bottom: 1.1rem;
@@ -91,21 +109,23 @@
     opacity: .82; max-width: 46ch; font-weight: 500;
   }
   .volt { color: var(--volt); }
-
   .hero { align-items: flex-start; }
   .hero .sub { margin-top: 1.6rem; }
   .hero-ctas { display: flex; gap: 14px; margin-top: 2.4rem; flex-wrap: wrap; }
   .btn-primary, .btn-ghost {
     font-family: var(--font); font-weight: 600; font-size: 1rem;
     padding: 15px 32px; border-radius: 999px; cursor: pointer;
-    text-decoration: none; display: inline-block; transition: all .2s ease;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 10px;
+    transition: all .2s ease;
   }
   .btn-primary { background: var(--volt); color: var(--bg); border: 2px solid var(--volt); }
   .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(232,255,71,.35); }
   .btn-ghost { background: transparent; color: var(--ink); border: 2px solid rgba(245,245,240,.25); }
   .btn-ghost:hover { border-color: var(--volt); color: var(--volt); }
+  .btn-primary svg, .btn-ghost svg { width: 19px; height: 19px; fill: currentColor; }
+  .btn-note { margin-top: 1rem; font-size: .85rem; font-weight: 500; opacity: .5; }
   .scroll-hint {
-    margin-top: 5rem; font-size: .85rem; font-weight: 500; opacity: .5;
+    margin-top: 4rem; font-size: .85rem; font-weight: 500; opacity: .5;
     animation: bob 2.2s ease-in-out infinite;
   }
   @keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(8px) } }
@@ -150,7 +170,6 @@
     background: rgba(232,255,71,.12); color: var(--volt);
     padding: 3px 10px; border-radius: 999px; font-weight: 600; font-size: 10px;
   }
-
   /* armario: grid de prendas */
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .garment {
@@ -166,7 +185,6 @@
     font-style: normal; font-size: 30px; opacity: .9;
   }
   .garment.volt-b { border-color: rgba(232,255,71,.5); }
-
   /* outfit: collage */
   .collage {
     border-radius: 14px; background: linear-gradient(145deg, #191919, #0f0f0f);
@@ -181,7 +199,6 @@
   .outfit-name { display: flex; justify-content: space-between; align-items: center; padding: 2px 4px; }
   .outfit-name b { font-size: 12px; }
   .likes { color: var(--volt); font-weight: 600; }
-
   /* worns: stories + streak */
   .stories { display: flex; gap: 10px; padding: 2px; }
   .story {
@@ -198,7 +215,6 @@
   }
   .streak .n { font-size: 26px; font-weight: 700; color: var(--volt); }
   .streak small { opacity: .7; line-height: 1.3; display: block; }
-
   /* feed: post */
   .post {
     border-radius: 14px; background: linear-gradient(145deg, #191919, #0f0f0f);
@@ -217,33 +233,21 @@
     border: 1px solid rgba(232,255,71,.4); border-radius: 999px; padding: 2px 8px;
   }
 
-  /* ---------- beta / registro ---------- */
-  .beta-wrap {
+  /* ---------- CTA final ---------- */
+  .cta-wrap {
     width: 100%; max-width: 680px; margin: 0 auto; text-align: center;
     background: rgba(16,16,16,.72); backdrop-filter: blur(14px);
     border: 1px solid rgba(245,245,240,.1); border-radius: 28px;
     padding: clamp(32px, 6vw, 64px);
   }
-  .beta-wrap h2 { margin-bottom: .6rem; }
-  .beta-wrap p.lead { margin: 0 auto 2rem; }
-  form { display: flex; gap: 12px; max-width: 480px; margin: 0 auto; }
-  input[type="email"] {
-    flex: 1; min-width: 0;
-    font-family: var(--font); font-size: 1rem; font-weight: 500;
-    background: var(--bg); color: var(--ink);
-    border: 2px solid rgba(245,245,240,.18); border-radius: 999px;
-    padding: 15px 24px; outline: none; transition: border-color .2s ease;
-  }
-  input[type="email"]::placeholder { color: rgba(245,245,240,.4); }
-  input[type="email"]:focus { border-color: var(--volt); }
-  .form-note { margin-top: 14px; font-size: .82rem; opacity: .5; }
-  .success {
-    display: none; margin-top: 1.2rem; color: var(--volt); font-weight: 600;
-  }
+  .cta-wrap h2 { margin-bottom: .6rem; }
+  .cta-wrap p.lead { margin: 0 auto 2rem; }
+  .cta-wrap .btn-primary { justify-content: center; }
 
   /* ---------- contacto + redes ---------- */
   .contact-row {
-    display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 2.4rem;
+    display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 2.6rem;
+    padding-top: 2.2rem; border-top: 1px solid rgba(245,245,240,.08);
   }
   .social {
     display: flex; align-items: center; gap: 9px;
@@ -253,7 +257,6 @@
   }
   .social:hover { border-color: var(--volt); color: var(--volt); transform: translateY(-2px); }
   .social svg { width: 17px; height: 17px; fill: currentColor; }
-
   footer {
     position: relative; z-index: 1;
     display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
@@ -281,7 +284,8 @@
     section.right .half p { margin-left: 0; }
     .half { max-width: 100%; }
     .phone { margin: 0 auto; }
-    form { flex-direction: column; }
+    .hero-ctas { width: 100%; }
+    .hero-ctas .btn-primary, .hero-ctas .btn-ghost { flex: 1; justify-content: center; }
   }
   @media (prefers-reduced-motion: reduce) {
     .scroll-hint { animation: none; }
@@ -296,7 +300,10 @@
 
 <nav>
   <a class="wordmark" href="#top">W<span>Ø</span>RN</a>
-  <a class="nav-cta" href="#beta">Únete a la beta</a>
+  <a class="nav-cta" href="https://apps.apple.com/app/id6772600366" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.09l-.02-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+    Descargar
+  </a>
 </nav>
 
 <div class="content" id="top">
@@ -304,13 +311,17 @@
   <!-- HERO -->
   <section class="hero">
     <div class="half">
-      <div class="kicker reveal">Beta · iOS · 2026</div>
+      <div class="kicker reveal">Ya disponible · iOS</div>
       <h1 class="reveal">Lo que llevas,<br><span class="volt">cuenta.</span></h1>
       <p class="lead sub reveal">WØRN es la red social de tu armario. Digitaliza tus prendas, monta outfits y comparte lo que llevas cada día.</p>
       <div class="hero-ctas reveal">
-        <a class="btn-primary" href="#beta">Quiero la beta</a>
+        <a class="btn-primary" href="https://apps.apple.com/app/id6772600366" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.09l-.02-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+          Descargar gratis
+        </a>
         <a class="btn-ghost" href="#armario">Ver la app ↓</a>
       </div>
+      <div class="btn-note reveal">Gratis · iPhone · Sin anuncios</div>
       <div class="scroll-hint">scroll para explorar ↓</div>
     </div>
   </section>
@@ -321,7 +332,7 @@
       <div class="half">
         <div class="kicker reveal">01 — Armario</div>
         <h2 class="reveal">Tu armario,<br>en tu bolsillo.</h2>
-        <p class="lead reveal">Haz una foto a cualquier prenda y WØRN la recorta y cataloga sola. Marca, categoría, color. Todo tu fondo de armario, buscable en segundos.</p>
+        <p class="lead reveal">Haz una foto a cualquier prenda y WØRN la recorta y cataloga sola. Marca, categoría, color, temporada. Todo tu fondo de armario, buscable en segundos.</p>
       </div>
       <div class="phone reveal">
         <div class="screen">
@@ -393,7 +404,7 @@
       <div class="half">
         <div class="kicker reveal">04 — Comunidad</div>
         <h2 class="reveal">Un feed donde<br>la ropa habla.</h2>
-        <p class="lead reveal">Sigue a gente con tu rollo, dale like a los fits que te inspiran y descubre qué prendas llevan. Cada post lleva etiquetadas las piezas.</p>
+        <p class="lead reveal">Sigue a gente con tu rollo, dale like a los fits que te inspiran y descubre qué prendas llevan. Cada post lleva etiquetadas las piezas. Se acabó el «¿de dónde es esa chaqueta?».</p>
       </div>
       <div class="phone reveal">
         <div class="screen">
@@ -410,32 +421,29 @@
     </div>
   </section>
 
-  <!-- BETA + CONTACTO -->
-  <section id="beta">
-    <div class="beta-wrap reveal">
-      <div class="kicker">Acceso anticipado</div>
-      <h2>Entra en la <span class="volt">beta.</span></h2>
-      <p class="lead">Plazas limitadas en TestFlight. Déjanos tu email y te mandamos la invitación en cuanto abra tu hueco.</p>
-
-      <form id="betaForm">
-        <input type="email" id="betaEmail" placeholder="tu@email.com" required>
-        <button class="btn-primary" type="submit">Quiero la beta</button>
-      </form>
-      <div class="form-note">Solo te escribiremos para la beta. Nada de spam.</div>
-      <div class="success" id="betaSuccess">✓ ¡Dentro! Te llega la invitación pronto.</div>
+  <!-- DESCARGA + CONTACTO -->
+  <section id="descargar">
+    <div class="cta-wrap reveal">
+      <div class="kicker">Ya disponible</div>
+      <h2>Descarga <span class="volt">WØRN.</span></h2>
+      <p class="lead">Gratis en el App Store. Esto acaba de empezar: los primeros que entren construyen la comunidad desde cero.</p>
+      <a class="btn-primary" href="https://apps.apple.com/app/id6772600366" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.09l-.02-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        Descargar en el App Store
+      </a>
+      <div class="btn-note">Requiere iOS 17 o posterior</div>
 
       <div class="contact-row">
-        <!-- Cambia los handles por los reales -->
         <a class="social" href="https://instagram.com/worn.community" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9-.1-1.3-.1-1.6-.1-4.8s0-3.6.1-4.8C2.4 4 4 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 3.6a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zm0 10.2a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-10.5a1.4 1.4 0 1 0 0-2.9 1.4 1.4 0 0 0 0 2.9z"/></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9-.1-1.3-.1-1.6-.1-4.8s0-3.6.1-4.8C2.4 4 4 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 3.6a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zm0 10.2a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-10.5a1.4 1.4 0 1 0 0-2.9 1.4 1.4 0 0 0 0 2.9z"/></svg>
           Instagram
         </a>
         <a class="social" href="https://tiktok.com/@worn.community" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24"><path d="M19.6 6.7a5.4 5.4 0 0 1-3.2-1V15a6.1 6.1 0 1 1-6.1-6.1c.3 0 .7 0 1 .1v3.3a2.9 2.9 0 1 0 2 2.7V1.9h3.1a5.4 5.4 0 0 0 3.2 4.4z"/></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 6.7a5.4 5.4 0 0 1-3.2-1V15a6.1 6.1 0 1 1-6.1-6.1c.3 0 .7 0 1 .1v3.3a2.9 2.9 0 1 0 2 2.7V1.9h3.1a5.4 5.4 0 0 0 3.2 4.4z"/></svg>
           TikTok
         </a>
         <a class="social" href="mailto:romero@worn.community">
-          <svg viewBox="0 0 24 24"><path d="M2 5.5A2.5 2.5 0 0 1 4.5 3h15A2.5 2.5 0 0 1 22 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 18.5v-13zm2.6-.1L12 11.6l7.4-6.2H4.6zM20 7.2l-7.4 6.2a1 1 0 0 1-1.2 0L4 7.2v11.3c0 .3.2.5.5.5h15c.3 0 .5-.2.5-.5V7.2z"/></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5A2.5 2.5 0 0 1 4.5 3h15A2.5 2.5 0 0 1 22 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 18.5v-13zm2.6-.1L12 11.6l7.4-6.2H4.6zM20 7.2l-7.4 6.2a1 1 0 0 1-1.2 0L4 7.2v11.3c0 .3.2.5.5.5h15c.3 0 .5-.2.5-.5V7.2z"/></svg>
           romero@worn.community
         </a>
       </div>
@@ -447,8 +455,8 @@
 <footer>
   <div>© 2026 WØRN · Marca registrada</div>
   <div>
-    <a href="https://worn.community/privacy" target="_blank" rel="noopener">Privacidad</a>
-    <a href="https://worn.community/terms" target="_blank" rel="noopener">Términos</a>
+    <a href="/privacidad/">Privacidad</a>
+    <a href="/terminos/">Términos</a>
   </div>
 </footer>
 
@@ -460,7 +468,6 @@
    ========================================================= */
 
 // El path EXACTO de Ø_Color.svg (viewBox 1024x1024).
-// Si Puyi entrega el V.9, pega aquí el nuevo atributo "d" y listo.
 const LOGO_PATH = "M741.01,338.63l43.88-43.88,14.12-14.12h-111.1l-2.42,2.42-89.4,89.4-60.13,60.17-104.41,104.37-18.44,18.44-33.63,33.63c-9.21-15.69-15.45-32.72-18.58-50.74-1.51-8.67-2.28-17.52-2.28-26.33,0-84.39,68.67-153.05,153.09-153.05,8.82,0,17.66.77,26.28,2.27l4.23.74,3.04-3.04,50.37-50.37,9.09-9.09-12.04-4.5c-25.87-9.68-53.11-14.58-80.97-14.58-127.74,0-231.66,103.9-231.66,231.62,0,27.89,4.91,55.15,14.58,81.01,6.93,18.65,16.35,36.41,28.02,52.88l-83.52,83.52-14.12,14.12h111.1l2.42-2.42,44.74-44.74,44.53-44.49,2.43-2.42v-.04l38.39-38.39,18.48-18.44,104.38-104.42,52.7-52.7c9.16,15.76,15.34,32.83,18.4,50.88,1.43,8.47,2.16,17.11,2.16,25.66,0,84.39-68.66,153.04-153.05,153.04-8.58,0-17.23-.73-25.71-2.16l-4.21-.71-3.02,3.02-50.45,50.45-9.11,9.11,12.08,4.49c25.66,9.54,52.72,14.37,80.42,14.37,127.71,0,231.61-103.9,231.61-231.61,0-27.7-4.84-54.75-14.37-80.42-6.92-18.75-16.28-36.55-27.88-53.01l22.05-22.05,17.91-17.9Z";
 
 // --- mini parser de path SVG (M, l, h, v, c, z) -> THREE.Shape ---
@@ -533,6 +540,7 @@ const mat = new THREE.MeshPhysicalMaterial({
   clearcoat: 0.6,
   clearcoatRoughness: 0.25
 });
+
 const logo = new THREE.Mesh(geo, mat);
 const S = 0.0042; // 1024 unidades SVG -> ~4.3 unidades de escena
 logo.scale.set(S, S, S);
@@ -568,7 +576,7 @@ const STATES = [
   { xf:  0.25, ry:  4.4,  rx: -0.2,  s: 0.75, z: 6.0 },  // outfits: bloque izq → logo DERECHA
   { xf: -0.25, ry:  6.6,  rx: 0.3,   s: 0.75, z: 6.0 },  // worns: bloque dcha → logo IZQUIERDA
   { xf:  0.25, ry:  8.8,  rx: -0.25, s: 0.75, z: 6.0 },  // feed: bloque izq → logo DERECHA
-  { xf:  0.00, ry: 12.56, rx: 0.0,   s: 1.12, z: 5.2 }   // beta: centrado, grande
+  { xf:  0.00, ry: 12.56, rx: 0.0,   s: 1.12, z: 5.2 }   // descarga: centrado, grande
 ];
 
 // Los "p" de cada keyframe se calculan desde la posición REAL de cada
@@ -590,6 +598,7 @@ function buildKF() {
 buildKF();
 addEventListener('resize', buildKF);
 addEventListener('load', () => { buildKF(); setTimeout(buildKF, 600); }); // re-mide al cargar fuentes
+
 function stateAt(p) {
   let a = KF[0], b = KF[KF.length - 1];
   for (let k = 0; k < KF.length - 1; k++) {
@@ -666,29 +675,6 @@ const io = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
 }, { threshold: 0.18 });
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-
-// --- form beta ---
-// Ahora mismo es front-only. Para conectarlo a Supabase, crea una tabla
-// `beta_signups` (id, email, created_at) con RLS de INSERT anónimo y descomenta:
-//
-// await fetch('https://eiwoeyswuwqosojunrg.supabase.co/rest/v1/beta_signups', {
-//   method: 'POST',
-//   headers: {
-//     'Content-Type': 'application/json',
-//     'apikey': 'TU_ANON_KEY',
-//     'Authorization': 'Bearer TU_ANON_KEY'
-//   },
-//   body: JSON.stringify({ email })
-// });
-//
-document.getElementById('betaForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const email = document.getElementById('betaEmail').value.trim();
-  if (!email) return;
-  document.getElementById('betaForm').style.display = 'none';
-  document.querySelector('.form-note').style.display = 'none';
-  document.getElementById('betaSuccess').style.display = 'block';
-});
 </script>
 </body>
 </html>
