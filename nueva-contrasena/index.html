@@ -62,8 +62,10 @@ const SUPABASE_URL = 'https://eiwoeywswuwqosojunrg.supabase.co';
 // Clave pública anon: la misma que lleva la app, no es secreta.
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpd29leXdzd3V3cW9zb2p1bnJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwODkyMTUsImV4cCI6MjA5MTY2NTIxNX0.7sssT-cuFYFeirmW94ugqqUiqi28KXQOSdF2ElBi2yM';
 
+// flowType implícito a propósito: el flujo lo inicia la app iOS, así que
+// este navegador nunca tendrá el code_verifier que exige PKCE.
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: { detectSessionInUrl: true, flowType: 'pkce' }
+  auth: { detectSessionInUrl: false, flowType: 'implicit', persistSession: false }
 });
 
 const form = document.getElementById('form');
@@ -73,24 +75,34 @@ const sub  = document.getElementById('sub');
 
 function show(text, cls) { msg.className = 'msg ' + cls; msg.textContent = text; }
 
-// El enlace del correo trae el token. Según la configuración llega como
-// ?code=... (PKCE) o en el fragmento #access_token=...&type=recovery.
-// Se cubren los dos casos.
+// El enlace del correo puede llegar en tres formatos según la plantilla
+// y la versión de Supabase. Se cubren los tres.
 async function establecerSesion() {
-  const params = new URLSearchParams(location.search);
-  const code = params.get('code');
-  if (code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    return !error;
-  }
-
+  // 1. Tokens en el fragmento: #access_token=...&refresh_token=...
   const hash = new URLSearchParams(location.hash.slice(1));
   const access_token = hash.get('access_token');
   const refresh_token = hash.get('refresh_token');
-  if (access_token && refresh_token) {
-    const { error } = await supabase.auth.setSession({ access_token, refresh_token });
-    return !error;
+  if (access_token) {
+    const { error } = await supabase.auth.setSession({
+      access_token,
+      refresh_token: refresh_token || ''
+    });
+    if (!error) return true;
+    console.warn('setSession:', error.message);
   }
+
+  // 2. Plantillas nuevas: ?token_hash=...&type=recovery
+  const params = new URLSearchParams(location.search);
+  const token_hash = params.get('token_hash');
+  if (token_hash) {
+    const { error } = await supabase.auth.verifyOtp({ token_hash, type: 'recovery' });
+    if (!error) return true;
+    console.warn('verifyOtp:', error.message);
+  }
+
+  // 3. Error devuelto por Supabase en el fragmento
+  const errDesc = hash.get('error_description') || params.get('error_description');
+  if (errDesc) console.warn('supabase:', errDesc);
 
   const { data } = await supabase.auth.getSession();
   return Boolean(data.session);
